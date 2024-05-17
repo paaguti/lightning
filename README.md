@@ -123,6 +123,18 @@ lightning purge
 
 The latest version of lightning has been tested on Ubuntu 22.04LTS.
 
+## Resucitate killed terminals
+
+The `lightning` command can resucitate terminals killed accidentally:
+
+```bash
+lightning newtty <killed device>
+```
+
+The program will check that there is a scenario running, that the scenario
+contains a device called <killed device> and that there is no terminal
+accessing the <killed device>.
+
 ## Remote execution of lightning
 
 In specific cases, the terminals to access the lightning devices need to be launched from outside the VM.
