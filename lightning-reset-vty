@@ -1,0 +1,35 @@
+#!/bin/bash
+#################################################################
+# lightning VTY reseter: Reset the VTY shell in a zombie Quagga #
+# for the UC3M virtual lab                                      #
+#                                                               #
+# Usage:                                                        #
+#    lightning-reset-vty R1                                     #
+#                                                               #
+#  It will actually kill the vtysh and that will kill the       #
+#  docker exec -- vtysh_persistent in turn. Caught and handled  #
+#  by lighting-terminal                                         #
+#################################################################
+
+function is_container_alive() {
+	docker ps --format '{{.Names}}' | egrep $(printf '^%s$' "$1")
+}
+
+if [[ $# -ne 1 ]]; then
+    echo "usage: $(basename $0) <router name>"
+    exit
+fi
+
+if [[ -z "$(is_container_alive $1)" ]]; then
+	echo "Router $1 not found in scenario!"
+	exit
+fi
+	
+TTY_PID=$(docker exec -i -t $1 pgrep vtysh | head -1 | tr -d '\n\r')
+if [[ -z "$TTY_PID" ]]; then
+    echo "$1 is not a router!"
+    exit
+fi
+
+docker exec -i -t $1 kill -USR1 $TTY_PID
+
