@@ -48,7 +48,7 @@ export PATH=$HOME/.local/bin:$PATH
 ```bash
 git clone https://github.com/ptoribi/lightning.git
 ```
-* **or this fork for the scenario verbaliser**
+* **or this fork for the scenario verbaliser and additional features (see below)**
 ```bash
 git clone https://github.com/paaguti/lightning.git
 ```
@@ -95,17 +95,24 @@ the lightning installation folder, some default examples are provided. You can a
 ```bash
 cd $(dirname $(readlink -f $(which lightning)))/scenarios
 ```
-For executing lightning, just type as a regular user in a shell:
+To print a small usage message ans a list of the scenarios installed in the Virtual Laboratry, just type as a regular user in a shell:
 ```bash
 lightning
 ```
-For starting a network scenario:
+
+To start a network scenario:
 ```bash
 lightning start SCENARIO_NAME
 ```
-For stopping the last executed network scenario:
+
+To stop the network scenario that is being executed:
 ```bash
 lightning stop
+```
+
+Finally, to cleanup any leftovers of a failed execution:
+```bash
+lightning purge
 ```
 ## Author
 **Pablo Toribio** (under supervision of Dr. C.J. Bernardos Cano)
@@ -144,6 +151,15 @@ The default value for `REMOTE` is `0`
 
 Customisation for the sysctl.conf files inside the containers is provided by `/usr/local/lightning/sysctl-router.conf` for *router* containers and `/usr/local/lightning/sysctl-host.conf` for *host* containers. These files provide a way to define the *default*  values of specific variables. Manipulation is still handled by `lightning`.
 
-## support for the ARM64v8 architecture
+## Support for the ARM64v8 architecture
 
 Pulls the new multi-arch router and host images. This new version can be used on x86_64/amd64 and ARM aarch_64 architectures (like Apple silicon).
+
+## Recover from locked router terminals.
+
+On rare occasions, the router stysh is locked and the router configuration cannor be accessed. In this case, the script `lightning-reset-vty` will help unlocking the process.
+
+Usage:
+```bash
+lightning-reset-vty <router name>
+```
