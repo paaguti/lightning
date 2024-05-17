@@ -1,0 +1,47 @@
+#!/bin/bash
+###########################################################################################
+# lightning terminal: a persistent mate-terminal in case we have to restart a docker-exec #
+# for the UC3M virtual lab                                                                #
+#                                                                                         #
+# Usage:                                                                                  #
+#    lightning-terminal PC hstOfi1                                                        #
+# or                                                                                      #
+#    lightning-terminal router RA                                                         #
+###########################################################################################
+
+function log_name() {
+  [ -n "$SUDO_USER" ] && echo $SUDO_USER
+  [ -z "$SUDO_USER" ] && id -un
+}
+
+function usage() {
+	printf "%s: usage\n" $(basename $0)
+	printf "  %s <type> <hostame>\n" $(basename $0)
+	printf " where <type> is 'PC' or 'router'\n\n"
+}
+
+function is_container_alive() {
+	docker ps --format '{{.Names}}' | egrep $(printf '^%s$' $1)
+}
+
+if [[ $# -ne 2 ]]; then
+	usage
+	exit 1
+fi
+
+HOST_TYPE=$1
+HOST_NAME=$2
+USER_BEHIND_SUDO=$(log_name)
+# paaguti: since there is a while outside, we don't need a persisten shell in the docker interaction
+if [[ "$HOST_TYPE" == "PC" ]]; then
+	while [[ -n "$(is_container_alive $HOST_NAME)" ]]; do
+		docker exec -i -t --user=$USER_BEHIND_SUDO $HOST_NAME bash_persistent $USER_BEHIND_SUDO
+	done
+elif [[ "$HOST_TYPE" == "router" ]]; then
+	while [[ -n "$(is_container_alive $HOST_NAME)" ]]; do
+    docker exec -i -t $HOST_NAME vtysh
+		clear
+	done
+else
+	usage
+fi
