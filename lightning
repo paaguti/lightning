@@ -124,6 +124,10 @@ else
       error_message "Scenario $2 not found"
       usage_message
     fi
+	# newtty
+  elif [ "$#" -eq 2 ] && [ $1 == "newtty" ]
+  then
+		new_tty $2
   # Update
   elif [ "$#" -eq 1 ] && [ $1 == "update" ]
   then

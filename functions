@@ -162,7 +162,8 @@ usage_message() {
   echo "  $(tput setaf 6)lightning [-h]             $(tput sgr 0)-> display usage message and list available scenarios"
   echo "  $(tput setaf 6)lightning stop             $(tput sgr 0)-> close running scenario"
   echo "  $(tput setaf 6)lightning purge            $(tput sgr 0)-> ONLY use this option in case \"stop\" doesn't work"
-  echo "  $(tput setaf 6)lightning start [flags]    $(tput setaf 154)$(tput smul)SCENARIO$(tput rmul)   $(tput sgr 0)-> start selected network scenario"
+  echo "  $(tput setaf 6)lightning start [flags] $(tput setaf 154)$(tput smul)SCENARIO$(tput rmul) $(tput sgr 0)-> start selected network scenario"
+  echo "  $(tput setaf 6)lightning newtty $(tput setaf 154)$(tput smul)DEVICE$(tput rmul)    $(tput sgr 0)-> create a new tty for DEVICE (which was killed before)"
   echo "  $(tput setaf 196)lightning update           $(tput sgr 0)-> update Lightning to the latest version available"
   echo ""
   echo "  flags:"
@@ -432,6 +433,34 @@ create_host() {
   information_message "Container $HOST_NAME (PID=$CONTAINER_PID) successfully created"
 }
 
+# usage: new_tty ROUTER_OR_PC_NAME
+# description: check that the *running* scenario has a container called ROUTER_OR_PCNAME
+#   and respawn a new mate-terminal if the original terminal was killed,
+# example: new_tty PCA
+
+new_tty() {
+	local DEVICE_NAME=$1
+	
+	BASE=$(dirname $(readlink $(which lightning)))
+	BOX=$(printf ' %s$' $DEVICE_NAME)
+	# printf 'ps -o args -C lightning-terminal | egrep "%s"' $BOX
+	ALIVE=$(ps -o args -C lightning-terminal | egrep "$BOX")
+	# echo $ALIVE
+	if [ -n "$ALIVE" ]; then
+		echo "$1 is living in a terminal. No need to create a new one"
+		return
+	fi
+
+	SCENARIO=$(ps -o args -C lightning | grep ' start ' | awk '{print $4}')
+	SCENARIO_FILE=$BASE/scenarios/$SCENARIO.xml
+	
+	XPATH=$(printf 'string(/scenario/container[./@name="%s"]/@type)' $DEVICE_NAME)
+	# echo XPATH: $XPATH scenario file: $SCENARIO_FILE
+	TYPE=$(xmllint --xpath $XPATH $SCENARIO_FILE)
+	
+	echo "$1 is a $TYPE"
+	mate-terminal -x $BASE/lightning-terminal $TYPE $1 &
+}
 
 # usage: create_router ROUTER_NAME ROUTER_NAME_LONG XML_FILE_WITHOUT_EXTENSION
 # description: creates a router with no network interfaces
