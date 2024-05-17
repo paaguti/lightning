@@ -667,11 +667,11 @@ display_host() {
 
   #xterm -T "$XTERM_WINDOW_TITLE" -e "docker exec -i -t --user=$USER_BEHIND_SUDO $HOST_NAME bash_persistent $USER_BEHIND_SUDO" &
   # paaguti: if REMOTE=1, just print the Docker commands for an external program
-  if [ $REMOTE -ne 1 ]
+  if [ $REMOTE -eq 1 ]
   then
-    mate-terminal --hide-menubar --title="$XTERM_WINDOW_TITLE" --command "docker exec -i -t --user=$USER_BEHIND_SUDO $HOST_NAME bash_persistent $USER_BEHIND_SUDO" &
-  else
     echo "docker exec -i -t --user=$USER_BEHIND_SUDO $HOST_NAME bash_persistent $USER_BEHIND_SUDO" | tee -a $USER_BEHIND_SUDO_HOME_PATH/commands
+  else
+    mate-terminal --hide-menubar --title="$XTERM_WINDOW_TITLE" --command "$LIGHTNING_INSTALLATION_PATH/lightning-terminal PC $HOST_NAME" &
   fi
 }
 
@@ -698,11 +698,11 @@ display_router() {
 
   #xterm -T "$XTERM_WINDOW_TITLE" -e "docker exec -i -t $ROUTER_NAME vtysh_persistent" &
   # paaguti: if REMOTE=1, just print the Docker commands for an external program
-  if [ $REMOTE -ne 1 ]
+  if [ $REMOTE -eq 1 ]
   then
-    mate-terminal --hide-menubar --title="$XTERM_WINDOW_TITLE" --command "docker exec -i -t $ROUTER_NAME vtysh_persistent" &
-  else
     echo "docker exec -i -t $ROUTER_NAME vtysh_persistent" | tee -a $USER_BEHIND_SUDO_HOME_PATH/commands
+  else
+    mate-terminal --hide-menubar --title="$XTERM_WINDOW_TITLE" --command "$LIGHTNING_INSTALLATION_PATH/lightning-terminal router $ROUTER_NAME" &
   fi
 }
 
