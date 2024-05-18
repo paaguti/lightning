@@ -440,26 +440,26 @@ create_host() {
 
 new_tty() {
 	local DEVICE_NAME=$1
-	
+
 	BASE=$(dirname $(readlink $(which lightning)))
 	BOX=$(printf ' %s$' $DEVICE_NAME)
 	# printf 'ps -o args -C lightning-terminal | egrep "%s"' $BOX
 	ALIVE=$(ps -o args -C lightning-terminal | egrep "$BOX")
 	# echo $ALIVE
 	if [ -n "$ALIVE" ]; then
-		echo "$1 is living in a terminal. No need to create a new one"
+		echo "$DEVICE_NAME is living in a terminal. No need to create a new one"
 		return
 	fi
 
 	SCENARIO=$(ps -o args -C lightning | grep ' start ' | awk '{print $4}')
 	SCENARIO_FILE=$BASE/scenarios/$SCENARIO.xml
-	
+
 	XPATH=$(printf 'string(/scenario/container[./@name="%s"]/@type)' $DEVICE_NAME)
 	# echo XPATH: $XPATH scenario file: $SCENARIO_FILE
 	TYPE=$(xmllint --xpath $XPATH $SCENARIO_FILE)
-	
-	echo "$1 is a $TYPE"
-	mate-terminal -x $BASE/lightning-terminal $TYPE $1 &
+
+	echo "$DEVICE_NAME is a $TYPE"
+	mate-terminal -t $DEVICE_NAME -x $BASE/lightning-terminal $TYPE $DEVICE_NAME &
 }
 
 # usage: create_router ROUTER_NAME ROUTER_NAME_LONG XML_FILE_WITHOUT_EXTENSION
