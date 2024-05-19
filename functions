@@ -6,17 +6,15 @@
 ##                                                                                           ##
 ##    Lightning - The simple and lightweight network simulator based on Docker containers    ##
 ##                                                                                           ##
-##    author:         Pablo Toribio (under supervision of professor C.J. Bernardos Cano)     ##
+##    authors:        Pablo Toribio (under supervision of professor C.J. Bernardos Cano)     ##
+##    authors:        Pedro A. Aranda                                                        ##
 ##                                                                                           ##
-##    project site:   https://github.com/ptoribi/lightning                                   ##
+##    project site:   https://github.com/paaguti/lightning                                   ##
 ##                                                                                           ##
 ##    file description:  library that provides several functions to be included and used     ##
 ##                       by the main program                                                 ##
 ##                                                                                           ##
 ###############################################################################################
-
-#echo "functions --> logname: $(logname)"
-#echo "functions --> whoami:  $(whoami)"
 
 function log_name() {
   [ -n "$SUDO_USER" ] && echo $SUDO_USER
@@ -438,26 +436,54 @@ create_host() {
 #   and respawn a new mate-terminal if the original terminal was killed,
 # example: new_tty PCA
 
+find_scenario_file() {
+  SCENARIO_NAME=$1
+	BASE=$(dirname $(readlink $(which lightning)))
+  for d in scenarios scenarios-local; do
+    if [ -f $BASE/$d/$SCENARIO_NAME.xml ]; then
+      echo $BASE/$d/$SCENARIO_NAME.xml
+      return
+    fi
+  done
+}
+
+# function: new_tty
+#  re-create the terminal window for a device when it was killed by the user
+#  usage: new_tty DEVICE
+#  paaguti: 240519
+
 new_tty() {
 	local DEVICE_NAME=$1
 
 	BASE=$(dirname $(readlink $(which lightning)))
-	BOX=$(printf ' %s$' $DEVICE_NAME)
-	# printf 'ps -o args -C lightning-terminal | egrep "%s"' $BOX
-	ALIVE=$(ps -o args -C lightning-terminal | egrep "$BOX")
+
+  # Check that lightning is running
+	SCENARIO=$(ps -o args -C lightning | grep ' start ' | awk '{print $4}')
+  if [ -z $SCENARIO ]; then
+    echo "lightning not running!"
+    return
+  fi
+
+  # Get the scenario file and the device type
+	SCENARIO_FILE=$(find_scenario_file $SCENARIO)
+	XPATH=$(printf 'string(/scenario/container[./@name="%s"]/@type)' $DEVICE_NAME)
+	# echo XPATH: $XPATH scenario file: $SCENARIO_FILE
+	TYPE=$(xmllint --xpath $XPATH $SCENARIO_FILE)
+  # This is a typo in the command line
+  if [ -z "$TYPE" ]; then
+    echo "Couldn't find $DEVICE_NAME in scenario!"
+    return
+  fi
+
+	# Check that the terminal was killed
+	ALIVE=$(ps -o args -C lightning-terminal | egrep $(printf ' %s$' $DEVICE_NAME))
 	# echo $ALIVE
 	if [ -n "$ALIVE" ]; then
 		echo "$DEVICE_NAME is living in a terminal. No need to create a new one"
 		return
 	fi
 
-	SCENARIO=$(ps -o args -C lightning | grep ' start ' | awk '{print $4}')
-	SCENARIO_FILE=$BASE/scenarios/$SCENARIO.xml
-
-	XPATH=$(printf 'string(/scenario/container[./@name="%s"]/@type)' $DEVICE_NAME)
-	# echo XPATH: $XPATH scenario file: $SCENARIO_FILE
-	TYPE=$(xmllint --xpath $XPATH $SCENARIO_FILE)
-
+  # restart the tty
 	echo "$DEVICE_NAME is a $TYPE"
 	mate-terminal -t $DEVICE_NAME -x $BASE/lightning-terminal $TYPE $DEVICE_NAME &
 }
