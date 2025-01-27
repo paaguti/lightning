@@ -39,7 +39,7 @@ then
   # ptoribi: copy all the files but the installer, the personalized_functions file, the README.md file, the screenshots and the xtras to that directory (and overwrite previous versions of the files if present)
   cp -rf $(ls | grep -vw "install\|personalized_functions\|README.md\|screenshots\|xtras") $LIGHTNING_INSTALLATION_DIRECTORY/lightning/
   # ptoribi: copy the personalized_functions file only if it is not already installed (do not overwrite)
-  cp -n personalized_functions $LIGHTNING_INSTALLATION_DIRECTORY/lightning/
+  cp --update=none personalized_functions $LIGHTNING_INSTALLATION_DIRECTORY/lightning/
 	# paaguti: copy the persistent terminal and make it executable
   install -o root -g root -m 0755 lightning-terminal $LIGHTNING_INSTALLATION_DIRECTORY/lightning
 	# paaguti: copy the vty reset utility and make it executable
