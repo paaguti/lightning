@@ -28,7 +28,7 @@ def main(args):
 
     print(f"Injecting poisoned advertisement to {args.network}", end=" ")
     print(f"with metric {args.metric} on {args.iface} every {args.interval}s")
-    sendp(evil, loop=1, inter=args.intervak, iface=args.iface)
+    sendp(evil, loop=1, inter=args.interval, iface=args.iface)
 
 
 if __name__ == '__main__':
