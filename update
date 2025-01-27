@@ -99,6 +99,7 @@ then
   $LIGHTNING_INSTALLATION_PATH/uninstall
 
   # ptoribi: the new version will be installed
+  # paaguti: this will also install the rip-poisoner and scapy
   /tmp/lightning-tmp/install
 
   # ptoribi: restore scenarios-local

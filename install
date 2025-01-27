@@ -44,6 +44,10 @@ then
   install -o root -g root -m 0755 lightning-terminal $LIGHTNING_INSTALLATION_DIRECTORY/lightning
 	# paaguti: copy the vty reset utility and make it executable
   install -o root -g root -m 0755 lightning-reset-vty $LIGHTNING_INSTALLATION_DIRECTORY/lightning
+	# paaguti: copy the rip poisoner and make it executable
+  install -o root -g root -m 0755 xtras/poison-rip $LIGHTNING_INSTALLATION_DIRECTORY/lightning
+  # paaguti: add scapy if not already installed
+  python3 -c 'import scapy' 2> /dev/null || apt-get install -y -qq python3-scapy
   # ptoribi: makes a backup of /etc/docker/daemon.json if present and deletes the original
   if [[ -f "/etc/docker/daemon.json" ]]; then
     cp /etc/docker/daemon.json /etc/docker/daemon.json.backup
@@ -56,12 +60,12 @@ then
     # ptoribi: reload the Docker configuration file
     systemctl reload docker
   fi
-  
+
   # ptoribi: create symbolic link, by default: /usr/local/bin/lightning ----> /usr/local/lightning-launcher
   ln -sf $LIGHTNING_INSTALLATION_DIRECTORY/lightning/lightning-launcher $SYMLINK_INSTALLATION_DIRECTORY/lightning
 	# paaguti: add the vty reset utility to /usr/local/bin
   ln -sf $LIGHTNING_INSTALLATION_DIRECTORY/lightning/lightning-reset-vty $SYMLINK_INSTALLATION_DIRECTORY/lightning-reset-vty
-	
+
   echo $(tput setaf 0)$(tput setab 2) "Lightning was properly installed" $(tput sgr 0)
 
   # ptoribi: get the last version of the scenarios from the GitHub repository
