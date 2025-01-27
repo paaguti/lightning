@@ -15,7 +15,7 @@ Two Docker images are set by default, called "host" and "router":
 *  **router** is a Debian based OS with the Quagga routing suite installed
 
 ## Compatibility
-Debian 9 x86_64 (compatibility with more OS will be checked in the nearly future)
+Ubuntu 22.04lts (x86_64 and arm64) (compatibility with more OS will be checked in the nearly future)
 
 ## Before the installation
 Before installing Lightning please check that your OS counts with the following **dependencies**:
@@ -29,12 +29,11 @@ apt-get install bridge-utils libxml2-utils evince git mate-terminal
 ```
 * **other utilities** that may probably be already installed in your OS:
 ```
-apt-get install sudo bash x11-utils libc-bin coreutils iproute2 iptables mawk sed python3 python3-pip
+apt-get install sudo bash x11-utils libc-bin coreutils iproute2 iptables mawk sed python3 python3-pip python3-scapy
 ```
 * **Python dependencies** for the scenario verbaliser:
 ``` bash
-python3 -m pip install --upgrade pip
-python3 -m pip install lxml
+apt-get install python3-lxml
 ```
 ** **Python** extra to get access to utilities installed with pip:
 Add the following line to your `.bash_aliases` or `.zshenv` file if you haven't before
