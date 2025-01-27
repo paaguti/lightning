@@ -64,8 +64,9 @@ then
   # ptoribi: create symbolic link, by default: /usr/local/bin/lightning ----> /usr/local/lightning-launcher
   ln -sf $LIGHTNING_INSTALLATION_DIRECTORY/lightning/lightning-launcher $SYMLINK_INSTALLATION_DIRECTORY/lightning
 	# paaguti: add the vty reset utility to /usr/local/bin
-  ln -sf $LIGHTNING_INSTALLATION_DIRECTORY/lightning/lightning-reset-vty $SYMLINK_INSTALLATION_DIRECTORY/lightning-reset-vty
-
+  for prg in lightning-reset-vty poison-rip; do
+    ln -sf $LIGHTNING_INSTALLATION_DIRECTORY/lightning/$prg $SYMLINK_INSTALLATION_DIRECTORY/$prg
+  done
   echo $(tput setaf 0)$(tput setab 2) "Lightning was properly installed" $(tput sgr 0)
 
   # ptoribi: get the last version of the scenarios from the GitHub repository
