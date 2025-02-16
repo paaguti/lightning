@@ -15,19 +15,21 @@ Two Docker images are set by default, called "host" and "router":
 *  **router** is a Debian based OS with the Quagga routing suite installed
 
 ## Compatibility
-Ubuntu 22.04lts (x86_64 and arm64) (compatibility with more OSes will be checked in the near future)
+Ubuntu 22.04lts (x86_64 and arm64) (compatibility with more OSes will be checked in the future).
+
+The recommended graphical desktop environment is **MATE**.
 
 ## Before the installation
-Before installing Lightning please check that your OS counts with the following **dependencies**:
+Before installing Lightning please check that the following **dependencies** are installed on your system:
 
 * **docker-ce** (Docker Engine Community Edition)
 A complete guide for installing Docker can be found in the official documentation of the project: https://docs.docker.com/engine/install/ (on the left panel select your distro and follow the instructions).
 
-* **utilities**: brctl (command line tool for ethernet bridges manipulation), xmllint (XML parser), evince (PDF viewer), git
+* **utilities**: brctl (command line tool for Ethernet bridges manipulation), xmllint (XML parser), evince (PDF viewer), git
 ```bash
 apt-get install bridge-utils libxml2-utils evince git mate-terminal
 ```
-* **other utilities** that may probably be already installed in your OS:
+* **other utilities** that may be already installed in your OS:
 ```
 apt-get install sudo bash x11-utils libc-bin coreutils iproute2 iptables mawk sed
 apt-get install python3 python3-scapy python3-lxml
@@ -40,8 +42,9 @@ git clone https://github.com/ptoribi/lightning.git
 ```
 * **or this fork for the scenario verbaliser and additional features (see below)**
 ```bash
-git clone https://github.com/paaguti/lightning.git
+git clone https://gitlab.com/paaguti/lightning.git
 ```
+[NOTE]: For historical reasons, an archived version of this program is available from https://github.com/paaguti/lightning.git
 
 * Change default locations **(Optional)** : You may change the location where the application folder and the symlink to the main program will be installed, by changing  the variables **LIGHTNING_INSTALLATION_DIRECTORY** and **SYMLINK_INSTALLATION_DIRECTORY** in the **lightning/install** file.
 
@@ -85,7 +88,7 @@ the lightning installation folder, some default examples are provided. You can a
 ```bash
 cd $(dirname $(readlink -f $(which lightning)))/scenarios
 ```
-To print a small usage message ans a list of the scenarios installed in the Virtual Laboratry, just type as a regular user in a shell:
+To print a small usage message and a list of the scenarios installed in the Virtual Laboratry, just type as a regular user in a shell:
 ```bash
 lightning
 ```
